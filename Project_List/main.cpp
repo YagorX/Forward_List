@@ -14,7 +14,6 @@
 template <typename Type>
 class SingleLinkedList {
 
-    // Óçåë ñïèñêà
     struct Node {
         Node() = default;
         Node(const Type& val, Node* next)
@@ -91,6 +90,26 @@ public:
         return *this;
     }
 
+    SingleLinkedList(SingleLinkedList&& other) {
+        head_ = std::exchange(other.head_, nullptr);
+        size_ = std::exchange(other.size_, 0);
+    }
+
+    SingleLinkedList& operator=(SingleLinkedList&& rhs) {
+        if (*this == &rhs)
+            return *this;
+
+        head_ = std::exchange(rhs.head_, nullptr);
+        size_ = std::exchange(rhs.size_, 0);
+        return *this;
+    }
+
+    ~SingleLinkedList()
+    {
+        Clear();
+    }
+
+
     [[nodiscard]] size_t GetSize() const noexcept {
         return size_;
     }
@@ -139,11 +158,6 @@ public:
         size_ = 0;
         for (auto begin{ container.begin() }, end{ container.end() }; begin != end; ++begin)
             PushBack(*begin);
-    }
-
-    ~SingleLinkedList()
-    {
-        Clear();
     }
 
     using value_type = Type;
